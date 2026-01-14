@@ -1,0 +1,75 @@
+services:
+  frontend:
+    image: ssu-frontend:dev
+    build:
+      context: ./ssu-frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:3000"      # Main dev server
+      - "24678:24678"    # HMR
+    volumes:
+      - ./ssu-frontend:/app
+      - /app/node_modules
+      - /app/.nuxt
+    environment:
+      HOST: '0.0.0.0'
+      NODE_ENV: development
+      WATCHPACK_POLLING: true
+    networks:
+      - app-network
+
+  backend:
+    image: ssu-backend:dev
+    build:
+      context: ./ssu-backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./ssu-backend:/var/www/html
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./ssu-backend:/var/www/html
+      - ./ssu-frontend:/app
+    ports:
+      - 8000:80
+    networks:
+      - app-network
+
+  db:
+    platform: linux/x86_64
+    image: mysql:latest
+    restart: unless-stopped
+    volumes:
+      - ./storage/db-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - app-network
+  
+  phpmyadmin:
+        platform: linux/amd64
+        image: phpmyadmin:5
+        container_name: pma
+        depends_on:
+            - db
+        restart: unless-stopped
+        environment:
+            PMA_HOST: db
+            PMA_PASSWORD: ${DB_ROOT_PASSWORD}
+        ports:
+            - 8001:80
+        networks:
+            - app-network
+
+networks:
+  app-network:
+    driver: bridge

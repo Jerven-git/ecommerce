@@ -1,0 +1,58 @@
+services:
+  backend:
+    image: ssu-backend:dev
+    build:
+      context: ./ssu-backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    volumes:
+      - ./ssu-backend:/var/www/html
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./nginx/challenge:/home/challenge
+      - ./nginx/ssl:/etc/ssl/private
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./dist:/usr/share/nginx/html/dist
+      - ./ssu-backend:/var/www/html
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - app-network
+
+  db:
+    platform: linux/x86_64
+    image: mysql:latest
+    restart: unless-stopped
+    volumes:
+      - ./storage/db-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DATABASE}
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASSWORD}
+      MYSQL_USER: ${USERNAME}
+      MYSQL_PASSWORD: ${PASSWORD}
+    networks:
+      - app-network
+  
+  phpmyadmin:
+        platform: linux/amd64
+        image: phpmyadmin:5
+        container_name: pma
+        depends_on:
+            - db
+        restart: unless-stopped
+        environment:
+            PMA_HOST: db
+            PMA_PASSWORD: ${DB_ROOT_PASSWORD}
+        ports:
+            - 8001:80
+        networks:
+            - app-network
+
+networks:
+  app-network:
+    driver: bridge

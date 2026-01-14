@@ -48,3 +48,12 @@ Thumbs.db
 *.mov
 *.wmv
 
+# Newly added patterns can go below this line
+!example/**
+storage/db-data/*
+workspace.code-workspace
+.env
+
+# SSL Challenge and Certificates
+nginx/challenge
+nginx/ssl
