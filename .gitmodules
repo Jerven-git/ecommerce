@@ -1,0 +1,6 @@
+[submodule "ssu-frontend"]
+	path = ssu-frontend
+	url = git@bitbucket.org:team_sumomedia/ssu-frontend.git
+[submodule "ssu-backend"]
+	path = ssu-backend
+	url = git@bitbucket.org:team_sumomedia/ssu-backend.git
