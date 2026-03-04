@@ -1,6 +1,6 @@
-[submodule "ssu-frontend"]
-	path = ssu-frontend
-	url = git@bitbucket.org:team_sumomedia/ssu-frontend.git
-[submodule "ssu-backend"]
-	path = ssu-backend
-	url = git@bitbucket.org:team_sumomedia/ssu-backend.git
+[submodule "ecommerce-frontend"]
+	path = ecommerce-frontend
+	url = git@github.com:Jerven-git/ecommerce-frontend.git
+[submodule "ecommerce-backend"]
+	path = ecommerce-backend
+	url = git@github.com:Jerven-git/ecommerce-backend.git
