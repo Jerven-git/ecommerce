@@ -57,3 +57,4 @@ workspace.code-workspace
 # SSL Challenge and Certificates
 nginx/challenge
 nginx/ssl
+*.deb
